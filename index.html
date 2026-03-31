@@ -2,205 +2,122 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Vault v10 | Shadow Singularity</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vault v10 | Matrix</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root { --neon: #00fff2; --deep: #050505; }
-        body { 
-            background: var(--deep); 
-            font-family: 'Space Grotesk', sans-serif; 
-            color: #e2e8f0; 
-            min-height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            margin: 0;
-            background-image: radial-gradient(circle at 50% 50%, #0a1a1a 0%, #050505 100%);
-        }
-        .v10-card { 
-            background: rgba(10, 10, 10, 0.8); 
-            border: 1px solid rgba(0, 255, 242, 0.15); 
-            box-shadow: 0 0 40px rgba(0, 255, 242, 0.05); 
-            backdrop-filter: blur(20px);
-        }
-        .neon-text { text-shadow: 0 0 10px rgba(0, 255, 242, 0.5); }
-        .btn-neon { 
-            background: transparent; 
-            border: 1px solid var(--neon); 
-            color: var(--neon); 
-            transition: 0.3s; 
-        }
-        .btn-neon:hover { background: var(--neon); color: black; box-shadow: 0 0 20px var(--neon); }
-        .privacy-blur { filter: blur(60px); opacity: 0.1; transition: 0.5s; }
-        #burnProgress { transition: width 30s linear; width: 0%; height: 2px; background: var(--neon); }
+        body { background: #000; font-family: 'Space Grotesk', sans-serif; color: #0f0; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .v10-border { border: 2px solid #0f0; box-shadow: 0 0 20px #0f0; background: rgba(0,20,0,0.9); }
+        .matrix-btn { border: 1px solid #0f0; transition: 0.3s; text-transform: uppercase; font-weight: 900; letter-spacing: 2px; }
+        .matrix-btn:hover { background: #0f0; color: #000; box-shadow: 0 0 30px #0f0; }
+        #timer { height: 4px; background: #0f0; width: 0%; transition: width 30s linear; }
+        canvas { display: none; }
     </style>
 </head>
-<body class="p-6">
+<body class="p-4">
 
-    <div id="appContainer" class="w-full max-w-lg v10-card rounded-[2rem] p-8 relative overflow-hidden">
-        
-        <header class="text-center mb-10">
-            <div class="inline-block px-4 py-1 border border-cyan-500/30 rounded-full mb-4">
-                <span class="text-[9px] font-bold tracking-[0.5em] text-cyan-400 uppercase">Neural Encryption Protocol</span>
-            </div>
-            <h1 class="text-5xl font-bold tracking-tighter italic neon-text uppercase">Vault v10</h1>
-            <p class="text-[11px] text-slate-500 font-medium mt-2">VILLAGE BROTHERS ELITE EDITION</p>
+    <div class="w-full max-w-lg v10-border rounded-3xl p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl italic tracking-tighter">VAULT V10 <span class="text-white">MATRIX</span></h1>
+            <p class="text-[10px] text-white opacity-50 mt-1 uppercase">Pixel-Shredder Protocol Activated</p>
         </header>
 
-        <div class="space-y-5 mb-8">
-            <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
-                <label class="text-[10px] text-cyan-400 font-bold uppercase mb-2 block">Singularity Key</label>
-                <input type="password" id="vaultKey" placeholder="••••••••" class="bg-transparent w-full font-bold text-white outline-none text-xl tracking-widest">
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <label class="flex flex-col items-center justify-center p-4 rounded-2xl border border-white/5 bg-white/5 cursor-pointer hover:bg-white/10 transition">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase mb-1">Secret Data</span>
-                    <span id="secretTag" class="text-xs text-cyan-400 font-bold">ATTACH</span>
-                    <input type="file" id="secretInput" class="hidden" onchange="updateTag('secretInput', 'secretTag')">
-                </label>
-                <label class="flex flex-col items-center justify-center p-4 rounded-2xl border border-white/5 bg-white/5 cursor-pointer hover:bg-white/10 transition">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase mb-1">Carrier Cover</span>
-                    <span id="carrierTag" class="text-xs text-slate-400 font-bold">ATTACH</span>
-                    <input type="file" id="carrierInput" class="hidden" onchange="updateTag('carrierInput', 'carrierTag')">
-                </label>
-            </div>
+        <div class="space-y-4 mb-6">
+            <input type="password" id="vaultKey" placeholder="ENTER MATRIX KEY" class="w-full bg-black border border-green-900 p-4 rounded-xl outline-none text-green-400 font-bold text-center">
+            
+            <label class="block w-full bg-green-900/20 border border-dashed border-green-500 p-6 rounded-xl text-center cursor-pointer">
+                <span id="fileLabel" class="text-xs font-black">LOAD TARGET IMAGE</span>
+                <input type="file" id="imgInput" accept="image/*" class="hidden" onchange="handleFile(this)">
+            </label>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-8">
-            <button onclick="process('hide')" class="btn-neon py-5 rounded-2xl font-bold uppercase tracking-widest text-xs">Generate Shadow</button>
-            <button onclick="process('reveal')" class="bg-white text-black py-5 rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-cyan-400 transition">Decrypt Shadow</button>
+        <div id="previewBox" class="hidden mb-6 rounded-xl overflow-hidden border border-green-500">
+            <img id="preview" src="" class="w-full h-auto opacity-50">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <button onclick="transform('shred')" class="matrix-btn py-5 rounded-xl">Shred (Hide)</button>
+            <button onclick="transform('restore')" class="matrix-btn py-5 rounded-xl bg-green-900/30">Restore (View)</button>
         </div>
 
         <div id="resArea" class="hidden space-y-4">
-            <div class="p-4 rounded-2xl bg-cyan-500/5 border border-cyan-500/20">
-                <div id="resStatus" class="text-[10px] text-cyan-400 font-bold uppercase mb-3">Singularity Output</div>
-                <div id="imageBox" class="hidden rounded-xl overflow-hidden border border-white/10 mb-4 shadow-2xl">
-                    <img id="outputImg" src="" class="w-full">
-                </div>
-                <div id="burnProgress"></div>
-                <p class="text-[8px] text-slate-600 mt-2 text-center uppercase tracking-widest">Auto-Wipe Sequence Engaged</p>
+            <div class="p-2 border border-green-500 rounded-xl bg-black">
+                <img id="outputImg" src="" class="w-full rounded-lg shadow-2xl">
+                <div id="timer" class="mt-2"></div>
             </div>
-            <button id="downloadBtn" class="w-full py-3 text-[10px] font-bold text-slate-400 border border-white/10 rounded-xl uppercase hidden">Save Shadow Image</button>
+            <a id="dlBtn" class="block text-center text-[10px] font-bold text-white underline tracking-widest uppercase">Download Shadow</a>
         </div>
-
-        <footer class="mt-12 pt-6 border-t border-white/5 flex flex-col items-center opacity-40">
-            <p class="text-[10px] font-bold tracking-[0.2em]">CORE ARCHITECT</p>
-            <p class="text-xs font-bold text-cyan-500 mt-1">manis.programmer@gmail.com</p>
-        </footer>
     </div>
 
-    <canvas id="canvas" class="hidden"></canvas>
+    <canvas id="c"></canvas>
 
     <script>
-        let burnTimer;
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
+        let rawImg = null;
+        let burn;
 
-        function updateTag(inputId, tagId) {
-            const input = document.getElementById(inputId);
-            if(input.files.length > 0) {
-                document.getElementById(tagId).innerText = "READY";
-                document.getElementById(tagId).style.color = "#00fff2";
-            }
+        function handleFile(i) {
+            const f = i.files[0];
+            const r = new FileReader();
+            r.onload = (e) => {
+                rawImg = e.target.result;
+                document.getElementById('preview').src = rawImg;
+                document.getElementById('previewBox').classList.remove('hidden');
+                document.getElementById('fileLabel').innerText = "DATA LOADED";
+            };
+            r.readAsDataURL(f);
         }
 
-        async function process(mode) {
+        async function transform(mode) {
             const key = document.getElementById('vaultKey').value;
-            if(!key) return alert("Key Required for v10 Protocol");
+            if(!key || !rawImg) return alert("Key and Image Required");
 
-            const secretFile = document.getElementById('secretInput').files[0];
-            const carrierFile = document.getElementById('carrierInput').files[0];
-
-            if(mode === 'hide') {
-                if(!secretFile || !carrierFile) return alert("Both images required for Shadow generation.");
-                
-                const secretB64 = await toBase64(secretFile);
-                const carrierImg = await loadImage(await toBase64(carrierFile));
-                
-                canvas.width = carrierImg.width;
-                canvas.height = carrierImg.height;
-                ctx.drawImage(carrierImg, 0, 0);
-                
-                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                // v10 RGB Bit-Spreading Logic
-                // We weave the secret into the Red and Blue channels primarily
-                const secretStr = btoa(secretB64) + "||V10-END||";
-                
-                for(let i = 0; i < secretStr.length; i++) {
-                    const charCode = secretStr.charCodeAt(i);
-                    // Scatter bits across R and B channels to avoid detection
-                    imgData.data[i * 4] = (imgData.data[i * 4] & 0xFE) | (charCode % 2); 
-                    imgData.data[i * 4 + 2] = charCode; // Deep storage in Blue
-                }
-
-                ctx.putImageData(imgData, 0, 0);
-                showResult(canvas.toDataURL("image/png"), "Shadow Created Successfully");
-                document.getElementById('downloadBtn').classList.remove('hidden');
-                document.getElementById('downloadBtn').onclick = () => {
-                    const link = document.createElement('a');
-                    link.download = 'shadow_v10.png';
-                    link.href = canvas.toDataURL("image/png");
-                    link.click();
-                };
-            } else {
-                if(!carrierFile) return alert("Attach the Shadow Image to decrypt.");
-                const ghostImg = await loadImage(await toBase64(carrierFile));
-                
-                canvas.width = ghostImg.width;
-                canvas.height = ghostImg.height;
-                ctx.drawImage(ghostImg, 0, 0);
-                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                
-                let secretStr = "";
-                for(let i = 0; i < imgData.data.length; i += 4) {
-                    secretStr += String.fromCharCode(imgData.data[i+2]);
-                    if(secretStr.endsWith("||V10-END||")) break;
-                }
-                
-                try {
-                    const finalData = atob(secretStr.replace("||V10-END||", ""));
-                    showResult(finalData, "Secret Revealed");
-                } catch(e) {
-                    alert("Decryption Failed: Invalid Key or Corrupt Shadow");
-                }
-            }
-        }
-
-        function showResult(src, status) {
-            document.getElementById('resArea').classList.remove('hidden');
-            document.getElementById('imageBox').classList.remove('hidden');
-            document.getElementById('outputImg').src = src;
-            document.getElementById('resStatus').innerText = status;
-            
-            const bar = document.getElementById('burnProgress');
-            clearTimeout(burnTimer);
-            bar.style.transition = 'none'; bar.style.width = '100%';
-            setTimeout(() => { bar.style.transition = 'width 30s linear'; bar.style.width = '0%'; }, 100);
-            burnTimer = setTimeout(() => {
-                document.getElementById('resArea').classList.add('hidden');
-                document.getElementById('outputImg').src = "";
-            }, 30000);
-        }
-
-        const toBase64 = file => new Promise((res, rej) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => res(reader.result);
-            reader.onerror = e => rej(e);
-        });
-
-        const loadImage = src => new Promise((res, rej) => {
             const img = new Image();
-            img.src = src;
-            img.onload = () => res(img);
-            img.onerror = e => rej(e);
-        });
+            img.src = rawImg;
+            await img.decode();
 
-        window.onblur = () => document.getElementById('appContainer').classList.add('privacy-blur');
-        window.onfocus = () => document.getElementById('appContainer').classList.remove('privacy-blur');
+            const cvs = document.getElementById('c');
+            const ctx = cvs.getContext('2d');
+            cvs.width = img.width; cvs.height = img.height;
+            ctx.drawImage(img, 0, 0);
+
+            const data = ctx.getImageData(0, 0, cvs.width, cvs.height);
+            const pixels = data.data;
+
+            // Generate Seed from Key
+            let seed = 0;
+            for(let i=0; i<key.length; i++) seed += key.charCodeAt(i) * (i+1);
+
+            // MATRIX TRANSFORMATION (XOR SHIFT)
+            // This shreds the image into high-entropy noise
+            for (let i = 0; i < pixels.length; i += 4) {
+                // We don't touch Alpha (pixels[i+3]) to keep the image solid
+                pixels[i] = pixels[i] ^ (seed % 255);     // Red
+                pixels[i+1] = pixels[i+1] ^ ((seed * 2) % 255); // Green
+                pixels[i+2] = pixels[i+2] ^ ((seed * 3) % 255); // Blue
+                
+                // Shuffle logic: mix the seed to change next pixel
+                seed = (seed * 16807) % 2147483647;
+            }
+
+            ctx.putImageData(data, 0, 0);
+            const final = cvs.toDataURL("image/png");
+            
+            const out = document.getElementById('outputImg');
+            out.src = final;
+            document.getElementById('resArea').classList.remove('hidden');
+            
+            const dl = document.getElementById('dlBtn');
+            dl.href = final;
+            dl.download = mode === 'shred' ? "shadow_matrix.png" : "restored_vault.png";
+
+            // Purge Timer
+            const bar = document.getElementById('timer');
+            clearTimeout(burn);
+            bar.style.transition = 'none'; bar.style.width = '0%';
+            setTimeout(() => { bar.style.transition = 'width 30s linear'; bar.style.width = '100%'; }, 50);
+            burn = setTimeout(() => { document.getElementById('resArea').classList.add('hidden'); out.src=""; }, 30000);
+        }
     </script>
 </body>
 </html>
